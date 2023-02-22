@@ -1,0 +1,7 @@
+Gemfile.lock
+
+#vs code
+.vscode/
+
+#macos
+.DS_Store
