@@ -118,13 +118,6 @@ module Opentelemetry
           
         end
 
-        # ##
-        # # @private Default credentials.
-        # def default_credentials scope: nil
-        #   Google::Cloud.configure.trace.credentials ||
-        #     Google::Cloud.configure.credentials ||
-        #     Trace::Credentials.default(scope: scope)
-        # end
       end
     end
   end
