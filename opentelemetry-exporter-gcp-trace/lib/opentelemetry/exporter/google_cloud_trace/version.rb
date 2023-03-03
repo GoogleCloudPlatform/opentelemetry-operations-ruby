@@ -16,10 +16,8 @@
 
 module Opentelemetry
   module Exporter
-    module Gcp
-      module Trace
-        VERSION = "0.1.0"
-      end
+    module GoogleCloudTrace
+      VERSION = "0.1.0"
     end
   end
 end
