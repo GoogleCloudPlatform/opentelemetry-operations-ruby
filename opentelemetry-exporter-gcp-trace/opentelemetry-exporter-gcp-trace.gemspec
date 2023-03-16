@@ -14,11 +14,11 @@
 
 # frozen_string_literal: true
 
-require_relative "lib/opentelemetry/exporter/gcp/trace/version"
+require_relative "lib/opentelemetry/exporter/google_cloud_trace/version"
 
 Gem::Specification.new do |spec|
   spec.name = "opentelemetry-exporter-gcp-trace"
-  spec.version = Opentelemetry::Exporter::Gcp::Trace::VERSION
+  spec.version = Opentelemetry::Exporter::GoogleCloudTrace::VERSION
   spec.authors = ["Nivedha"]
   spec.email = ["nivedhasenthil@gmail.com"]
 
@@ -39,11 +39,11 @@ Gem::Specification.new do |spec|
   end
 
   spec.add_dependency "google-cloud-trace-v2", "~> 0.0"
-  spec.add_dependency "opentelemetry-api"
+  spec.add_dependency "opentelemetry-sdk"
 
-  gem.add_development_dependency "google-style", "~> 1.26.1"
-  gem.add_development_dependency "minitest", "~> 5.16"
-  gem.add_development_dependency "minitest-autotest", "~> 1.0"
-  gem.add_development_dependency "minitest-focus", "~> 1.1"
-  gem.add_development_dependency "minitest-rg", "~> 5.2"
+  spec.add_development_dependency "google-style", "~> 1.26.1"
+  spec.add_development_dependency "minitest", "~> 5.16"
+  spec.add_development_dependency "minitest-autotest", "~> 1.0"
+  spec.add_development_dependency "minitest-focus", "~> 1.1"
+  spec.add_development_dependency "minitest-rg", "~> 5.2"
 end

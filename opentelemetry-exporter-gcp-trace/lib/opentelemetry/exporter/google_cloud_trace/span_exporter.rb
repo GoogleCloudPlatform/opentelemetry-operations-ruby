@@ -15,13 +15,11 @@
 # frozen_string_literal: true
 
 require "google/cloud/trace/v2/trace_service"
-require 'opentelemetry/sdk'
-require 'opentelemetry/common'
 
 module Opentelemetry
   module Exporter
     module GoogleCloudTrace
-      class CloudTraceSpanExporter
+      class SpanExporter
         SUCCESS = OpenTelemetry::SDK::Trace::Export::SUCCESS
         FAILURE = OpenTelemetry::SDK::Trace::Export::FAILURE
         private_constant(:SUCCESS, :FAILURE)
@@ -31,7 +29,8 @@ module Opentelemetry
                        scope: nil,
                        timeout: nil,
                        endpoint: nil
-                     
+
+          p "before intialise"           
           @client = ::Google::Cloud::Trace::V2::TraceService::Client.new do |config|
             config.project_id = project_id if project_id
             config.credentials = credentials if credentials
@@ -39,7 +38,7 @@ module Opentelemetry
             config.timeout = timeout if timeout
             config.endpoint = endpoint if endpoint
           end
-
+          p "after initialise"
           @shutdown = false
         end
 
