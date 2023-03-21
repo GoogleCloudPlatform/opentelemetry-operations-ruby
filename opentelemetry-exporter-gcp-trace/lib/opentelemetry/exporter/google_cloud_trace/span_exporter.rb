@@ -14,7 +14,10 @@
 
 # frozen_string_literal: true
 
+require "google/cloud" unless defined? Google::Cloud.new
+require "google/cloud/config"
 require "google/cloud/trace/v2/trace_service"
+require_relative "translator"
 
 module Opentelemetry
   module Exporter
@@ -30,7 +33,6 @@ module Opentelemetry
                        timeout: nil,
                        endpoint: nil
 
-          p "before intialise"           
           @client = ::Google::Cloud::Trace::V2::TraceService::Client.new do |config|
             config.project_id = project_id if project_id
             config.credentials = credentials if credentials
@@ -38,8 +40,11 @@ module Opentelemetry
             config.timeout = timeout if timeout
             config.endpoint = endpoint if endpoint
           end
-          p "after initialise"
+          @project_id = (project_id || default_project_id || credentials&.project_id)
+          @project_id = @project_id.to_s
+          raise ArgumentError, "project_id is missing" if @project_id.empty?
           @shutdown = false
+          @translator = Translator.new @project_id
         end
 
         # Called to export sampled {OpenTelemetry::SDK::Trace::SpanData} structs.
@@ -53,16 +58,15 @@ module Opentelemetry
           return FAILURE if @shutdown
 
           begin
-            batch_request = create_batch span_data 
-            p "REquest"
-            p batch_request
+            batch_request = @translator.create_batch span_data
             @client.batch_write_spans batch_request
+            SUCCESS
           rescue => exception
-            p "**********************"
+            p "failed"
             p exception.message
             p exception.backtrace
+            FAILURE
           end
-          
         end
 
         # Called when {OpenTelemetry::SDK::Trace::TracerProvider#force_flush} is called, if
@@ -86,37 +90,10 @@ module Opentelemetry
 
         private
 
-
-        def create_batch(spans)
-          begin
-            cloud_trace_spans = []
-          
-          spans.each do |span|
-            trace_id = span.hex_trace_id
-            span_id = span.hex_span_id
-            parent_id = span.hex_parent_span_id
-            span_name = "projects/helical-zone-771/traces/#{trace_id}/spans/#{span_id}"
-            cloud_trace_spans << Google::Cloud::Trace::V2::Span.new(name: span_name,
-                                               span_id: span_id,
-                                               parent_span_id: parent_id,
-                                               display_name: Google::Cloud::Trace::V2::TruncatableString.new(value:"test_span", truncated_byte_count:0),
-                                               start_time:Time.now,
-                                               end_time:Time.now)
-          end
-          
-          
-          {
-            name: "projects/helical-zone-771",
-            spans: cloud_trace_spans
-          }
-          rescue => exception
-            p "((((((((((((((((("
-            p exception.message
-            p exception.backtrace
-          end
-          
+        def default_project_id
+          Google::Cloud.configure.project_id ||
+          Google::Cloud.env.project_id
         end
-
       end
     end
   end
