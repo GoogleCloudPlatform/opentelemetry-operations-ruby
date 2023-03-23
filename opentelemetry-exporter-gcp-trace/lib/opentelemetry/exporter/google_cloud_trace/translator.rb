@@ -17,6 +17,7 @@ require "google/protobuf/well_known_types"
 require "google/rpc/status_pb"
 require "opentelemetry/trace/status"
 require "opentelemetry/trace/span_kind"
+require_relative "version"
 
 module Opentelemetry
   module Exporter
@@ -31,6 +32,18 @@ module Opentelemetry
         MAX_ATTRIBUTES_VAL_BYTES = 16 * 1024  # 16 kilobytes
         MAX_DISPLAY_NAME_BYTE_COUNT = 128
         MAX_EVENT_NAME_BYTE_COUNT = 256
+        LABELS_MAPPING = {
+            "http.scheme": "/http/client_protocol",
+            "http.host": "/http/host",
+            "http.method": "/http/method",
+            # https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/trace/semantic_conventions/http.md#common-attributes
+            "http.request_content_length": "/http/request/size",
+            "http.response_content_length": "/http/response/size",
+            "http.route": "/http/route",
+            "http.status_code": "/http/status_code",
+            "http.url": "/http/url",
+            "http.user_agent": "/http/user_agent",
+        }
         
         def initialize project_id
             @project_id = project_id
@@ -58,15 +71,13 @@ module Opentelemetry
                                     display_name: create_name(span.name, MAX_DISPLAY_NAME_BYTE_COUNT),
                                     start_time: create_time(span.start_timestamp),
                                     end_time: create_time(span.end_timestamp),
-                                    attributes: create_attributes(span.attributes),
+                                    attributes: create_attributes(span.attributes, MAX_SPAN_ATTRIBUTES),
                                     links: create_links(span.links),
                                     status: create_status(span.status),
                                     time_events: create_time_events(span.events),
                                     span_kind: create_span_kind(span.kind)
                                  )
           end
-
-          p cloud_trace_spans
             
           {
             name: "projects/#{@project_id}",
@@ -94,11 +105,69 @@ module Opentelemetry
         end
         
         def create_attributes  attributes, max_attributes, add_agent_attribute = false
-            attribute_map = Google::Protobuf::Map.new
-            until 
+            return if attributes.nil? || attributes.empty?
+            attribute_map = {}
+
+            if add_agent_attribute
+              attribute_map["g.co/agent"] = create_attribute_value(
+                "opentelemetry-ruby #{Gem.loaded_specs['opentelemetry-sdk'].version.to_s};" \
+                "google-cloud-trace-exporter #{Opentelemetry::Exporter::GoogleCloudTrace::VERSION}"
+              ) 
+            end
+
+            attributes.each_pair do |k,v|
+                key = truncate_str(k, MAX_ATTRIBUTES_KEY_BYTES).first
+                key = LABELS_MAPPING[key] if LABELS_MAPPING.has_key? key
+                value = create_attribute_value(v)
+                attribute_map[key] = value if !value.nil?
+
+                break if attribute_map.count == max_attributes
+            end
+            
+            Google::Cloud::Trace::V2::Span::Attributes.new(
+                attribute_map: attribute_map,
+                dropped_attributes_count: attributes.count - attribute_map.count
+            )
         end  
+
+        def create_attribute_value value
+          case value
+          when (TrueClass || FalseClass)
+            Google::Cloud::Trace::V2::AttributeValue.new bool_value: value
+          when Integer
+            Google::Cloud::Trace::V2::AttributeValue.new int_value: value
+          else
+            Google::Cloud::Trace::V2::AttributeValue.new(
+              string_value: create_name(value.to_s, MAX_ATTRIBUTES_VAL_BYTES)
+            )
+          end
+        end
         
         def create_links  links
+          return if links.nil?
+          trace_links = []
+          dropped_links_count = 0
+
+          if links.length > MAX_LINKS
+            dropped_links_count = links.length - MAX_LINKS
+            links = links[0...MAX_LINKS]
+          end  
+
+          links.each do |link|
+            trace_id = link.context.hex_trace_id
+            span_id = link.context.hex_span_id
+            trace_links << Google::Cloud::Trace::V2::Span::Link.new(
+              trace_id: trace_id,
+              span_id: span_id,
+              type: "TYPE_UNSPECIFIED",
+              attributes: create_attributes(link.attributes, MAX_LINK_ATTRIBUTES)
+            )
+          end
+
+          Google::Cloud::Trace::V2::Span::Links.new( 
+            link: trace_links, 
+            dropped_links_count: dropped_links_count
+          )          
         end  
         
         def create_status status 
@@ -107,56 +176,54 @@ module Opentelemetry
               Google::Rpc::Status.new(code: Google::Rpc::Code::OK, message: status.description)
           when OpenTelemetry::Trace::Status::UNSET
               nil
-          when OpenTelemetry::Trace::Status::ERROR
-              Google::Rpc::Status.new(code: Google::Rpc::Code::UNKNOWN, message: status.description)
           else
               Google::Rpc::Status.new(code: Google::Rpc::Code::UNKNOWN, message: status.description)
           end  
         end  
         
         def create_time_events  events
-            return if events.nil?
-            time_events = []
-            dropped_message_events_count = 0
-            
-            dropped_annotations_count = 0
-            if events.length > MAX_EVENTS:
-                dropped_annotations_count = events.length - MAX_EVENTS
-                events = events[0...MAX_EVENTS]
-            end
+          return if events.nil?
+          time_events = []
+          dropped_message_events_count = 0
+          
+          dropped_annotations_count = 0
+          if events.length > MAX_EVENTS
+              dropped_annotations_count = events.length - MAX_EVENTS
+              events = events[0...MAX_EVENTS]
+          end  
 
-            events.each do |event|
-                time_events << Google::Cloud::Trace::V2::Span::TimeEvent.new(
-                    time: create_time(event.timestamp),
-                    annotation: Google::Cloud::Trace::V2::Span::TimeEvent::Annotation.new(
-                        description: create_name(event.name, MAX_EVENT_NAME_BYTE_COUNT),
-                        annotation: create_attributes(event.attributes, MAX_EVENT_ATTRIBUTES)
-                    )
-                )
-            end
-            
-            Google::Cloud::Trace::V2::Span::TimeEvents.new( 
-              time_event: time_events, 
-              dropped_annotations_count: dropped_annotations_count,
-              dropped_message_events_count: dropped_message_events_count
-            )
+          events.each do |event|
+              time_events << Google::Cloud::Trace::V2::Span::TimeEvent.new(
+                  time: create_time(event.timestamp),
+                  annotation: Google::Cloud::Trace::V2::Span::TimeEvent::Annotation.new(
+                      description: create_name(event.name, MAX_EVENT_NAME_BYTE_COUNT),
+                      annotation: create_attributes(event.attributes, MAX_EVENT_ATTRIBUTES)
+                  )
+              )
+          end
+          
+          Google::Cloud::Trace::V2::Span::TimeEvents.new( 
+            time_event: time_events, 
+            dropped_annotations_count: dropped_annotations_count,
+            dropped_message_events_count: dropped_message_events_count
+          )
         end  
         
         def create_span_kind  kind
-            case kind
-            when OpenTelemetry::Trace::SpanKind::INTERNAL
-                Google::Cloud::Trace::V2::Span::SpanKind::INTERNAL
-            when OpenTelemetry::Trace::SpanKind::CLIENT
-                Google::Cloud::Trace::V2::Span::SpanKind::CLIENT
-            when OpenTelemetry::Trace::SpanKind::SERVER
-                Google::Cloud::Trace::V2::Span::SpanKind::SERVER
-            when OpenTelemetry::Trace::SpanKind::PRODUCER
-                Google::Cloud::Trace::V2::Span::SpanKind::PRODUCER
-            when OpenTelemetry::Trace::SpanKind::CONSUMER
-                Google::Cloud::Trace::V2::Span::SpanKind::CONSUMER    
-            else
-                Google::Cloud::Trace::V2::Span::SpanKind::SPAN_KIND_UNSPECIFIED
-            end 
+          case kind
+          when OpenTelemetry::Trace::SpanKind::INTERNAL
+              Google::Cloud::Trace::V2::Span::SpanKind::INTERNAL
+          when OpenTelemetry::Trace::SpanKind::CLIENT
+              Google::Cloud::Trace::V2::Span::SpanKind::CLIENT
+          when OpenTelemetry::Trace::SpanKind::SERVER
+              Google::Cloud::Trace::V2::Span::SpanKind::SERVER
+          when OpenTelemetry::Trace::SpanKind::PRODUCER
+              Google::Cloud::Trace::V2::Span::SpanKind::PRODUCER
+          when OpenTelemetry::Trace::SpanKind::CONSUMER
+              Google::Cloud::Trace::V2::Span::SpanKind::CONSUMER    
+          else
+              Google::Cloud::Trace::V2::Span::SpanKind::SPAN_KIND_UNSPECIFIED
+          end 
         end
       end    
     end
