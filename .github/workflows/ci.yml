@@ -20,6 +20,9 @@ on:
 jobs:
   CI:
     if: ${{ github.repository == 'GoogleCloudPlatform/opentelemetry-operations-ruby' }}
+    defaults:
+      run:
+        working-directory: ./opentelemetry-exporter-gcp-trace
     strategy:
       matrix:
         include:
@@ -46,6 +49,9 @@ jobs:
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: "${{ matrix.ruby }}"
+    - name: Bundle install
+      run: |
+        bundle install    
     - name: Rubocop
       run: |
         bundle exec rake rubocop    
