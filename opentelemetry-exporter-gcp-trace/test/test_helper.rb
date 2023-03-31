@@ -20,4 +20,3 @@ require "minitest/focus"
 require "minitest/rg"
 require "ostruct"
 require "opentelemetry/exporter/google_cloud_trace"
-

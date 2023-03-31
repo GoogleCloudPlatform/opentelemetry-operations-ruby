@@ -29,17 +29,17 @@ Gem::Specification.new do |spec|
   spec.metadata["homepage_uri"] = spec.homepage
   spec.require_paths = ["lib"]
   spec.license = "Apache-2.0"
-  
+
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
-  spec.files = Dir.chdir(__dir__) do
+  spec.files = Dir.chdir __dir__ do
     `git ls-files -z`.split("\x0").reject do |f|
       (f == __FILE__) || f.match(%r{\A(?:(?:bin|test|spec|features)/|\.(?:git|circleci)|appveyor)})
     end
   end
 
-  spec.add_dependency "google-cloud-trace-v2", "~> 0.0"
   spec.add_dependency "google-cloud-core", "~> 1.5"
+  spec.add_dependency "google-cloud-trace-v2", "~> 0.0"
   spec.add_dependency "opentelemetry-sdk"
 
   spec.add_development_dependency "google-style", "~> 1.26.1"

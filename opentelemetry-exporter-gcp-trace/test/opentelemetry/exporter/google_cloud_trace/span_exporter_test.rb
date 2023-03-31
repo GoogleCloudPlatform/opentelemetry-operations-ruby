@@ -17,9 +17,9 @@
 require "test_helper"
 
 describe Opentelemetry::Exporter::GoogleCloudTrace::SpanExporter do
-  let(:config) do
-    OpenStruct.new( 
-      project_id: "test_project", 
+  let :config do
+    OpenStruct.new(
+      project_id: "test_project",
       credentials: "credential",
       scope: "scope",
       timeout: 100,
@@ -43,14 +43,14 @@ describe Opentelemetry::Exporter::GoogleCloudTrace::SpanExporter do
       hex_span_id: "span_id",
       hex_parent_span_id: "parent_id",
       name: "test_span",
-      start_timestamp: 1241251345423543,
-      end_timestamp: 13413243214324,
-      attributes: {"http.method": "get", "http.host": "google.com"},
+      start_timestamp: 1_241_251_345_423_543,
+      end_timestamp: 13_413_243_214_324,
+      attributes: { "http.method": "get", "http.host": "google.com" },
       status: OpenStruct.new(code: OpenTelemetry::Trace::Status::OK, description: "message"),
       events: [OpenStruct.new(
-        timestamp: 2132144123423, 
-        name: "message", 
-        attributes:{"http.method": "get", "http.host": "google.com"}
+        timestamp: 2_132_144_123_423,
+        name: "message",
+        attributes: { "http.method": "get", "http.host": "google.com" }
       )],
       kind: OpenTelemetry::Trace::SpanKind::INTERNAL
     )
@@ -58,7 +58,7 @@ describe Opentelemetry::Exporter::GoogleCloudTrace::SpanExporter do
     trace_mock = Minitest::Mock.new
     trace_mock.expect :batch_write_spans, true do |args|
       assert_equal args[:name], "projects/test_project"
-      assert_kind_of Google::Cloud::Trace::V2::Span, args[:spans].first 
+      assert_kind_of Google::Cloud::Trace::V2::Span, args[:spans].first
     end
 
     Google::Cloud::Trace::V2::TraceService::Client.stub :new, trace_mock, config do
@@ -94,5 +94,4 @@ describe Opentelemetry::Exporter::GoogleCloudTrace::SpanExporter do
       assert exporter.send(:shutdown?)
     end
   end
-  
 end

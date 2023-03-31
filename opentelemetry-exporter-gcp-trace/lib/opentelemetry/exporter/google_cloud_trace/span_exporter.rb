@@ -22,10 +22,14 @@ require_relative "translator"
 module Opentelemetry
   module Exporter
     module GoogleCloudTrace
+      ##
+      # This provides an implementation of span exporter for Google Cloud Trace
+      # It will convert the Opentelemetry span data into Clould Trace spans
+      # and publish them to the Cloud trace service.
       class SpanExporter
         SUCCESS = OpenTelemetry::SDK::Trace::Export::SUCCESS
         FAILURE = OpenTelemetry::SDK::Trace::Export::FAILURE
-        private_constant(:SUCCESS, :FAILURE)
+        private_constant :SUCCESS, :FAILURE
 
         def initialize project_id: nil,
                        credentials: nil,
@@ -52,17 +56,15 @@ module Opentelemetry
         # @param [Enumerable<OpenTelemetry::SDK::Trace::SpanData>] span_data the
         #   list of recorded {OpenTelemetry::SDK::Trace::SpanData} structs to be
         #   exported.
-        # @param [optional Numeric] timeout An optional timeout in seconds.
         # @return [Integer] the result of the export.
-        def export(span_data, timeout: nil)
+        def export span_data
           return FAILURE if @shutdown
 
           begin
             batch_request = @translator.create_batch span_data
             @client.batch_write_spans batch_request
             SUCCESS
-          rescue => exception
-            p exception
+          rescue StandardError
             FAILURE
           end
         end
@@ -70,18 +72,14 @@ module Opentelemetry
         # Called when {OpenTelemetry::SDK::Trace::TracerProvider#force_flush} is called, if
         # this exporter is registered to a {OpenTelemetry::SDK::Trace::TracerProvider}
         # object.
-        #
-        # @param [optional Numeric] timeout An optional timeout in seconds.
-        def force_flush(timeout: nil)
+        def force_flush
           SUCCESS
         end
 
         # Called when {OpenTelemetry::SDK::Trace::TracerProvider#shutdown} is called, if
         # this exporter is registered to a {OpenTelemetry::SDK::Trace::TracerProvider}
         # object.
-        #
-        # @param [optional Numeric] timeout An optional timeout in seconds.
-        def shutdown(timeout: nil)
+        def shutdown
           @shutdown = true
           SUCCESS
         end
@@ -90,7 +88,7 @@ module Opentelemetry
 
         def default_project_id
           Google::Cloud.configure.project_id ||
-          Google::Cloud.env.project_id
+            Google::Cloud.env.project_id
         end
 
         def shutdown?

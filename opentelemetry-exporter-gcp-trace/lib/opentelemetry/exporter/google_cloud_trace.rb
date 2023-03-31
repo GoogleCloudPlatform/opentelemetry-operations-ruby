@@ -16,13 +16,23 @@
 
 module OpenTelemetry
   module Exporter
+    ##
+    # # Google Cloud Trace
+    #
+    # Cloud Trace is a distributed tracing system that collects latency data
+    # from your applications and displays it in the Google Cloud Console.
+    # You can track how requests propagate through your application and
+    # receive detailed near real-time performance insights.
+    # Cloud Trace automatically analyzes all of your application's traces
+    # to generate in-depth latency reports to surface performance degradations,
+    # and can capture traces from all of your VMs, containers, or App Engine projects.
     module GoogleCloudTrace
     end
   end
 end
-  
-  
-  require 'opentelemetry/sdk'
-  require 'opentelemetry/common'
-  require 'opentelemetry/exporter/google_cloud_trace/span_exporter'
-  require 'opentelemetry/exporter/google_cloud_trace/version'
+
+
+require "opentelemetry/sdk"
+require "opentelemetry/common"
+require "opentelemetry/exporter/google_cloud_trace/span_exporter"
+require "opentelemetry/exporter/google_cloud_trace/version"

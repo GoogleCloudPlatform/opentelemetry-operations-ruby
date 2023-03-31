@@ -14,4 +14,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'opentelemetry/exporter/google_cloud_trace'
+require "opentelemetry/exporter/google_cloud_trace"
