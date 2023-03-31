@@ -15,6 +15,7 @@
 # frozen_string_literal: true
 require "google/protobuf/well_known_types"
 require "google/rpc/status_pb"
+require "google/rpc/code_pb"
 require "opentelemetry/trace/status"
 require "opentelemetry/trace/span_kind"
 require_relative "version"
@@ -71,14 +72,13 @@ module Opentelemetry
                                     display_name: create_name(span.name, MAX_DISPLAY_NAME_BYTE_COUNT),
                                     start_time: create_time(span.start_timestamp),
                                     end_time: create_time(span.end_timestamp),
-                                    attributes: create_attributes(span.attributes, MAX_SPAN_ATTRIBUTES),
+                                    attributes: create_attributes(span.attributes, MAX_SPAN_ATTRIBUTES, true),
                                     links: create_links(span.links),
                                     status: create_status(span.status),
                                     time_events: create_time_events(span.events),
                                     span_kind: create_span_kind(span.kind)
                                  )
           end
-            
           {
             name: "projects/#{@project_id}",
             spans: cloud_trace_spans
@@ -116,17 +116,20 @@ module Opentelemetry
             end
 
             attributes.each_pair do |k,v|
-                key = truncate_str(k, MAX_ATTRIBUTES_KEY_BYTES).first
-                key = LABELS_MAPPING[key] if LABELS_MAPPING.has_key? key
+                key = truncate_str(k.to_s, MAX_ATTRIBUTES_KEY_BYTES).first
+                key = LABELS_MAPPING[key.to_sym] if LABELS_MAPPING.has_key? key.to_sym
                 value = create_attribute_value(v)
                 attribute_map[key] = value if !value.nil?
 
                 break if attribute_map.count == max_attributes
             end
+
+            dropped_attributes_count = attributes.count - attribute_map.count
+            dropped_attributes_count = dropped_attributes_count + 1 if add_agent_attribute
             
             Google::Cloud::Trace::V2::Span::Attributes.new(
                 attribute_map: attribute_map,
-                dropped_attributes_count: attributes.count - attribute_map.count
+                dropped_attributes_count: dropped_attributes_count
             )
         end  
 
@@ -154,8 +157,8 @@ module Opentelemetry
           end  
 
           links.each do |link|
-            trace_id = link.context.hex_trace_id
-            span_id = link.context.hex_span_id
+            trace_id = link.context&.hex_trace_id
+            span_id = link.context&.hex_span_id
             trace_links << Google::Cloud::Trace::V2::Span::Link.new(
               trace_id: trace_id,
               span_id: span_id,
@@ -197,7 +200,7 @@ module Opentelemetry
                   time: create_time(event.timestamp),
                   annotation: Google::Cloud::Trace::V2::Span::TimeEvent::Annotation.new(
                       description: create_name(event.name, MAX_EVENT_NAME_BYTE_COUNT),
-                      annotation: create_attributes(event.attributes, MAX_EVENT_ATTRIBUTES)
+                      attributes: create_attributes(event.attributes, MAX_EVENT_ATTRIBUTES)
                   )
               )
           end

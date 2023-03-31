@@ -62,9 +62,7 @@ module Opentelemetry
             @client.batch_write_spans batch_request
             SUCCESS
           rescue => exception
-            p "failed"
-            p exception.message
-            p exception.backtrace
+            p exception
             FAILURE
           end
         end
@@ -93,6 +91,10 @@ module Opentelemetry
         def default_project_id
           Google::Cloud.configure.project_id ||
           Google::Cloud.env.project_id
+        end
+
+        def shutdown?
+          @shutdown
         end
       end
     end

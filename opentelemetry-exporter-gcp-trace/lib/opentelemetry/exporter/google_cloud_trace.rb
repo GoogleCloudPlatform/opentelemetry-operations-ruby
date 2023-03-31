@@ -15,11 +15,11 @@
 # limitations under the License.
 
 module OpenTelemetry
-    module Exporter
-      module GoogleCloudTrace
-      end
+  module Exporter
+    module GoogleCloudTrace
     end
   end
+end
   
   
   require 'opentelemetry/sdk'

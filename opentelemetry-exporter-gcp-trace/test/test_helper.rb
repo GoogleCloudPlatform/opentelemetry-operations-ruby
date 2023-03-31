@@ -14,7 +14,10 @@
 
 # frozen_string_literal: true
 
-$LOAD_PATH.unshift File.expand_path("../lib", __dir__)
-require "opentelemetry/exporter/google_cloud_trace/span_exporter"
-
+gem "minitest"
 require "minitest/autorun"
+require "minitest/focus"
+require "minitest/rg"
+require "ostruct"
+require "opentelemetry/exporter/google_cloud_trace"
+
