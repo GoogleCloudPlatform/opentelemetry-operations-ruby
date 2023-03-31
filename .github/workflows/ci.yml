@@ -47,7 +47,6 @@ jobs:
       with:
         ruby-version: "${{ matrix.ruby }}"
     - name: Rubocop
-      if: ${{ matrix.os == "ubuntu-latest" && matrix.ruby == "3.2" }}
       run: |
         bundle exec rake rubocop    
     - name: Test 
