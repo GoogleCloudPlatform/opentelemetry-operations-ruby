@@ -57,7 +57,10 @@ module Opentelemetry
         #   list of recorded {OpenTelemetry::SDK::Trace::SpanData} structs to be
         #   exported.
         # @return [Integer] the result of the export.
-        def export span_data
+        # rubocop:disable Lint/UnusedMethodArgument
+        # timeout is needed to match Opentelemetry exporter interface
+        def export span_data, timeout: nil
+          # rubocop:enable Lint/UnusedMethodArgument
           return FAILURE if @shutdown
 
           begin
@@ -72,14 +75,20 @@ module Opentelemetry
         # Called when {OpenTelemetry::SDK::Trace::TracerProvider#force_flush} is called, if
         # this exporter is registered to a {OpenTelemetry::SDK::Trace::TracerProvider}
         # object.
-        def force_flush
+        # rubocop:disable Lint/UnusedMethodArgument
+        # timeout is needed to match Opentelemetry exporter interface
+        def force_flush timeout: nil
+          # rubocop:enable Lint/UnusedMethodArgument
           SUCCESS
         end
 
         # Called when {OpenTelemetry::SDK::Trace::TracerProvider#shutdown} is called, if
         # this exporter is registered to a {OpenTelemetry::SDK::Trace::TracerProvider}
         # object.
-        def shutdown
+        # rubocop:disable Lint/UnusedMethodArgument
+        # timeout is needed to match Opentelemetry exporter interface
+        def shutdown timeout: nil
+          # rubocop:enable Lint/UnusedMethodArgument
           @shutdown = true
           SUCCESS
         end
