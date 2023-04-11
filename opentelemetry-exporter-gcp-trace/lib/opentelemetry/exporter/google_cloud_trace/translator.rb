@@ -47,8 +47,8 @@ module Opentelemetry
           "http.route": "/http/route",
           "http.status_code": "/http/status_code",
           "http.url": "/http/url",
-          "http.user_agent": "/http/user_agent"
-          "http.host": "/http/host",
+          "http.user_agent": "/http/user_agent",
+          "http.host": "/http/host"
         }.freeze
 
         def initialize project_id
