@@ -19,9 +19,9 @@ require "google/rpc/status_pb"
 require "google/rpc/code_pb"
 require "opentelemetry/trace/status"
 require "opentelemetry/trace/span_kind"
-require_relative "version"
+require "opentelemetry/exporter/google_cloud_trace/version"
 
-module Opentelemetry
+module OpenTelemetry
   module Exporter
     module GoogleCloudTrace
       ##
@@ -117,7 +117,7 @@ module Opentelemetry
           if add_agent_attribute
             attribute_map["g.co/agent"] = create_attribute_value(
               "opentelemetry-ruby #{Gem.loaded_specs['opentelemetry-sdk'].version};" \
-              "google-cloud-trace-exporter #{Opentelemetry::Exporter::GoogleCloudTrace::VERSION}"
+              "google-cloud-trace-exporter #{OpenTelemetry::Exporter::GoogleCloudTrace::VERSION}"
             )
           end
 
@@ -141,7 +141,7 @@ module Opentelemetry
 
         def create_attribute_value value
           case value
-          when (TrueClass || FalseClass)
+          when true, false
             Google::Cloud::Trace::V2::AttributeValue.new bool_value: value
           when Integer
             Google::Cloud::Trace::V2::AttributeValue.new int_value: value

@@ -16,7 +16,7 @@
 
 require "test_helper"
 
-describe Opentelemetry::Exporter::GoogleCloudTrace::SpanExporter do
+describe OpenTelemetry::Exporter::GoogleCloudTrace::SpanExporter do
   let :config do
     OpenStruct.new(
       project_id: "test_project",
@@ -31,7 +31,7 @@ describe Opentelemetry::Exporter::GoogleCloudTrace::SpanExporter do
     trace_mock = Minitest::Mock.new
 
     Google::Cloud::Trace::V2::TraceService::Client.stub :new, trace_mock, config do
-      Opentelemetry::Exporter::GoogleCloudTrace::SpanExporter.new project_id: "test_project"
+      OpenTelemetry::Exporter::GoogleCloudTrace::SpanExporter.new project_id: "test_project"
     end
 
     trace_mock.verify
@@ -62,7 +62,7 @@ describe Opentelemetry::Exporter::GoogleCloudTrace::SpanExporter do
     end
 
     Google::Cloud::Trace::V2::TraceService::Client.stub :new, trace_mock, config do
-      exporter = Opentelemetry::Exporter::GoogleCloudTrace::SpanExporter.new project_id: "test_project"
+      exporter = OpenTelemetry::Exporter::GoogleCloudTrace::SpanExporter.new project_id: "test_project"
       assert_equal OpenTelemetry::SDK::Trace::Export::SUCCESS, exporter.export([span])
     end
 
@@ -72,7 +72,7 @@ describe Opentelemetry::Exporter::GoogleCloudTrace::SpanExporter do
   it "returns Failure if shutdown on export" do
     trace_mock = Minitest::Mock.new
     Google::Cloud::Trace::V2::TraceService::Client.stub :new, trace_mock, config do
-      exporter = Opentelemetry::Exporter::GoogleCloudTrace::SpanExporter.new project_id: "test_project"
+      exporter = OpenTelemetry::Exporter::GoogleCloudTrace::SpanExporter.new project_id: "test_project"
       exporter.shutdown
       assert_equal OpenTelemetry::SDK::Trace::Export::FAILURE, exporter.export([])
     end
@@ -81,7 +81,7 @@ describe Opentelemetry::Exporter::GoogleCloudTrace::SpanExporter do
   it "returns Failure if export fails" do
     trace_mock = Minitest::Mock.new
     Google::Cloud::Trace::V2::TraceService::Client.stub :new, trace_mock, config do
-      exporter = Opentelemetry::Exporter::GoogleCloudTrace::SpanExporter.new project_id: "test_project"
+      exporter = OpenTelemetry::Exporter::GoogleCloudTrace::SpanExporter.new project_id: "test_project"
       assert_equal OpenTelemetry::SDK::Trace::Export::FAILURE, exporter.export([])
     end
   end
@@ -89,7 +89,7 @@ describe Opentelemetry::Exporter::GoogleCloudTrace::SpanExporter do
   it "marks itself as shutdown and returns success on shutdown" do
     trace_mock = Minitest::Mock.new
     Google::Cloud::Trace::V2::TraceService::Client.stub :new, trace_mock, config do
-      exporter = Opentelemetry::Exporter::GoogleCloudTrace::SpanExporter.new project_id: "test_project"
+      exporter = OpenTelemetry::Exporter::GoogleCloudTrace::SpanExporter.new project_id: "test_project"
       assert_equal OpenTelemetry::SDK::Trace::Export::SUCCESS, exporter.shutdown
       assert exporter.send(:shutdown?)
     end

@@ -16,8 +16,8 @@
 
 require "test_helper"
 
-describe Opentelemetry::Exporter::GoogleCloudTrace::Translator do
-  let(:translator) { Opentelemetry::Exporter::GoogleCloudTrace::Translator.new "test_project" }
+describe OpenTelemetry::Exporter::GoogleCloudTrace::Translator do
+  let(:translator) { OpenTelemetry::Exporter::GoogleCloudTrace::Translator.new "test_project" }
 
   it "creates truncatable name" do
     truncated_str = translator.send :create_name, "somename", 4
@@ -162,7 +162,7 @@ describe Opentelemetry::Exporter::GoogleCloudTrace::Translator do
 
   def assert_attribute converted_attr, attr_count: 2, dropped_count: 0
     agent = "opentelemetry-ruby #{Gem.loaded_specs['opentelemetry-sdk'].version};" \
-            "google-cloud-trace-exporter #{Opentelemetry::Exporter::GoogleCloudTrace::VERSION}"
+            "google-cloud-trace-exporter #{OpenTelemetry::Exporter::GoogleCloudTrace::VERSION}"
     assert_kind_of Google::Cloud::Trace::V2::Span::Attributes, converted_attr
     assert_equal attr_count, converted_attr.attribute_map.count
     assert_equal dropped_count, converted_attr.dropped_attributes_count

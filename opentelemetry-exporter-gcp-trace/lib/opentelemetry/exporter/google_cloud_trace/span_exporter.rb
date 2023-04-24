@@ -14,12 +14,11 @@
 
 # frozen_string_literal: true
 
-require "google/cloud" unless defined? Google::Cloud.new
-require "google/cloud/config"
 require "google/cloud/trace/v2/trace_service"
-require_relative "translator"
+require "opentelemetry/exporter/google_cloud_trace/translator"
+require "google/cloud/env"
 
-module Opentelemetry
+module OpenTelemetry
   module Exporter
     module GoogleCloudTrace
       ##
@@ -96,8 +95,7 @@ module Opentelemetry
         private
 
         def default_project_id
-          Google::Cloud.configure.project_id ||
-            Google::Cloud.env.project_id
+          Google::Cloud.env.project_id
         end
 
         def shutdown?

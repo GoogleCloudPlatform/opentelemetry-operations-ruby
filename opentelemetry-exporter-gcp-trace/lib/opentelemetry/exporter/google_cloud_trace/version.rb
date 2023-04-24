@@ -14,7 +14,7 @@
 
 # frozen_string_literal: true
 
-module Opentelemetry
+module OpenTelemetry
   module Exporter
     module GoogleCloudTrace
       VERSION = "0.1.0"

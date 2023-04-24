@@ -13,4 +13,8 @@ Style/PreferredHashMethods:
 
 Metrics/ClassLength:
   Exclude:
-    - "**/translator.rb"    
+    - "**/translator.rb"   
+
+Naming/FileName:
+  Exclude:
+    - "lib/opentelemetry-exporter-gcp-trace.rb"     
