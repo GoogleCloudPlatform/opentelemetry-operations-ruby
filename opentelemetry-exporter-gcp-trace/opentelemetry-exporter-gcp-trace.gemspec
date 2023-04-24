@@ -40,7 +40,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "google-cloud-env"
   spec.add_dependency "google-cloud-trace-v2", "~> 0.0"
-  spec.add_dependency "opentelemetry-api"
+  spec.add_dependency "opentelemetry-sdk"
 
   spec.add_development_dependency "google-style", "~> 1.26.1"
   spec.add_development_dependency "minitest", "~> 5.16"
