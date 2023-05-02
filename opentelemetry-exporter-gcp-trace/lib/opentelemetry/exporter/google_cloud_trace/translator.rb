@@ -65,7 +65,7 @@ module OpenTelemetry
         # @return [Google::Cloud::Trace::V2::BatchWriteSpansRequest]
         # The request message for the BatchWriteSpans method.
         def create_batch spans
-           cloud_trace_spans = spans.map do |span|
+          cloud_trace_spans = spans.map do |span|
             trace_id = span.hex_trace_id
             span_id = span.hex_span_id
             parent_id = span.hex_parent_span_id

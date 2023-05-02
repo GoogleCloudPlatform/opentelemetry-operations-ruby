@@ -33,8 +33,8 @@ module OpenTelemetry
 
 
         ##
-        # Creates a new object for google cloud trace 
-        # opentelemetry span exporter. It creates client for 
+        # Creates a new object for google cloud trace
+        # opentelemetry span exporter. It creates client for
         # Google cloud trace service to be used for publihing span.
         #
         #
@@ -94,7 +94,7 @@ module OpenTelemetry
 
         # rubocop:disable Lint/UnusedMethodArgument
         # timeout is needed to match Opentelemetry exporter interface
-        
+
         # Called to export sampled {OpenTelemetry::SDK::Trace::SpanData} structs.
         #
         # @param [Enumerable<OpenTelemetry::SDK::Trace::SpanData>] span_data the
@@ -127,9 +127,9 @@ module OpenTelemetry
           @shutdown = true
           SUCCESS
         end
-        
+
         # rubocop:enable Lint/UnusedMethodArgument
-        
+
         private
 
         def default_project_id
