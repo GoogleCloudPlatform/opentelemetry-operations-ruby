@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Copyright 2023 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,7 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# frozen_string_literal: true
 
 require "google/cloud/trace/v2/trace_service"
 require "opentelemetry/exporter/google_cloud_trace/translator"
@@ -30,6 +31,47 @@ module OpenTelemetry
         FAILURE = OpenTelemetry::SDK::Trace::Export::FAILURE
         private_constant :SUCCESS, :FAILURE
 
+
+        ##
+        # Creates a new object for google cloud trace 
+        # opentelemetry span exporter. It creates client for 
+        # Google cloud trace service to be used for publihing span.
+        #
+        #
+        # @param [String] project_id Project identifier for the Trace service
+        #   you are connecting to. If not present, the default project for the
+        #   credentials is used.
+        # @param [String, Hash, Google::Auth::Credentials] credentials The path to
+        #   the keyfile as a String, the contents of the keyfile as a Hash, or a
+        #   Google::Auth::Credentials object.
+        # @param [String, Array<String>] scope The OAuth 2.0 scopes controlling
+        #   the set of resources and operations that the connection can access.
+        #   See [Using OAuth 2.0 to Access Google
+        #   APIs](https://developers.google.com/identity/protocols/OAuth2).
+        #
+        #   The default scope is:
+        #
+        #   * `https://www.googleapis.com/auth/trace.append`
+        # @param [Numeric] timeout Default timeout to use in requests. Optional.
+        # @param [String] endpoint Override of the endpoint host name. Optional.
+        #   If the param is nil, uses the default endpoint.
+        #
+        # @return [OpenTelemetry::Exporter::GoogleCloudTrace::SpanExporter]
+        #
+        # @example
+        #   require 'opentelemetry/sdk'
+        #   require 'opentelemetry/instrumentation/all'
+        #   require 'opentelemetry/exporter/google_cloud_trace'
+        #   OpenTelemetry::SDK.configure do |c|
+        #     c.service_name = 'test_app'
+        #     c.add_span_processor(
+        #          OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor.new(
+        #            OpenTelemetry::Exporter::GoogleCloudTrace::SpanExporter.new
+        #          )
+        #        )
+        #     c.use_all() # enables all instrumentation!
+        #   end
+        #
         def initialize project_id: nil,
                        credentials: nil,
                        scope: nil,
@@ -50,16 +92,16 @@ module OpenTelemetry
           @translator = Translator.new @project_id
         end
 
+        # rubocop:disable Lint/UnusedMethodArgument
+        # timeout is needed to match Opentelemetry exporter interface
+        
         # Called to export sampled {OpenTelemetry::SDK::Trace::SpanData} structs.
         #
         # @param [Enumerable<OpenTelemetry::SDK::Trace::SpanData>] span_data the
         #   list of recorded {OpenTelemetry::SDK::Trace::SpanData} structs to be
         #   exported.
         # @return [Integer] the result of the export.
-        # rubocop:disable Lint/UnusedMethodArgument
-        # timeout is needed to match Opentelemetry exporter interface
         def export span_data, timeout: nil
-          # rubocop:enable Lint/UnusedMethodArgument
           return FAILURE if @shutdown
 
           begin
@@ -74,24 +116,20 @@ module OpenTelemetry
         # Called when {OpenTelemetry::SDK::Trace::TracerProvider#force_flush} is called, if
         # this exporter is registered to a {OpenTelemetry::SDK::Trace::TracerProvider}
         # object.
-        # rubocop:disable Lint/UnusedMethodArgument
-        # timeout is needed to match Opentelemetry exporter interface
         def force_flush timeout: nil
-          # rubocop:enable Lint/UnusedMethodArgument
           SUCCESS
         end
 
         # Called when {OpenTelemetry::SDK::Trace::TracerProvider#shutdown} is called, if
         # this exporter is registered to a {OpenTelemetry::SDK::Trace::TracerProvider}
         # object.
-        # rubocop:disable Lint/UnusedMethodArgument
-        # timeout is needed to match Opentelemetry exporter interface
         def shutdown timeout: nil
-          # rubocop:enable Lint/UnusedMethodArgument
           @shutdown = true
           SUCCESS
         end
-
+        
+        # rubocop:enable Lint/UnusedMethodArgument
+        
         private
 
         def default_project_id

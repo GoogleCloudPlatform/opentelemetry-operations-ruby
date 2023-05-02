@@ -33,6 +33,5 @@ end
 
 
 require "opentelemetry/sdk"
-require "opentelemetry/common"
 require "opentelemetry/exporter/google_cloud_trace/span_exporter"
 require "opentelemetry/exporter/google_cloud_trace/version"

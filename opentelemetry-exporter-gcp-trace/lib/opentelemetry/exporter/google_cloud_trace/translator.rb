@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Copyright 2023 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,7 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# frozen_string_literal: true
 
 require "google/protobuf/well_known_types"
 require "google/rpc/status_pb"
@@ -25,6 +26,7 @@ module OpenTelemetry
   module Exporter
     module GoogleCloudTrace
       ##
+      # @private
       # This class helps translating the opentelemetry
       # span data [Enumerable<OpenTelemetry::SDK::Trace::SpanData>] into
       # cloud trace spans [Google::Cloud::Trace::V2::Span]
@@ -58,19 +60,17 @@ module OpenTelemetry
         # Creates batch_write_spans_request from opentelemetry spans
         #
         # @param [Enumerable<OpenTelemetry::SDK::Trace::SpanData>] span_data the
-        # list of recorded {OpenTelemetry::SDK::Trace::SpanData} structs to be
-        # exported.
+        #   list of recorded {OpenTelemetry::SDK::Trace::SpanData} structs to be
+        #   exported.
         # @return [Google::Cloud::Trace::V2::BatchWriteSpansRequest]
         # The request message for the BatchWriteSpans method.
         def create_batch spans
-          cloud_trace_spans = []
-
-          spans.each do |span|
+           cloud_trace_spans = spans.map do |span|
             trace_id = span.hex_trace_id
             span_id = span.hex_span_id
             parent_id = span.hex_parent_span_id
             span_name = "projects/#{@project_id}/traces/#{trace_id}/spans/#{span_id}"
-            cloud_trace_spans << Google::Cloud::Trace::V2::Span.new(
+            Google::Cloud::Trace::V2::Span.new(
               name: span_name,
               span_id: span_id,
               parent_span_id: parent_id,
@@ -84,6 +84,7 @@ module OpenTelemetry
               span_kind: create_span_kind(span.kind)
             )
           end
+
           {
             name: "projects/#{@project_id}",
             spans: cloud_trace_spans
@@ -116,7 +117,7 @@ module OpenTelemetry
 
           if add_agent_attribute
             attribute_map["g.co/agent"] = create_attribute_value(
-              "opentelemetry-ruby #{Gem.loaded_specs['opentelemetry-sdk'].version};" \
+              "opentelemetry-ruby #{OpenTelemetry::SDK::VERSION};" \
               "google-cloud-trace-exporter #{OpenTelemetry::Exporter::GoogleCloudTrace::VERSION}"
             )
           end
@@ -127,7 +128,7 @@ module OpenTelemetry
             value = create_attribute_value v
             attribute_map[key] = value unless value.nil?
 
-            break if attribute_map.count == max_attributes
+            break if attribute_map.count >= max_attributes
           end
 
           dropped_attributes_count = attributes.count - attribute_map.count
@@ -154,7 +155,6 @@ module OpenTelemetry
 
         def create_links links
           return if links.nil?
-          trace_links = []
           dropped_links_count = 0
 
           if links.length > MAX_LINKS
@@ -162,10 +162,10 @@ module OpenTelemetry
             links = links[0...MAX_LINKS]
           end
 
-          links.each do |link|
+          trace_links = links.map do |link|
             trace_id = link.context&.hex_trace_id
             span_id = link.context&.hex_span_id
-            trace_links << Google::Cloud::Trace::V2::Span::Link.new(
+            Google::Cloud::Trace::V2::Span::Link.new(
               trace_id: trace_id,
               span_id: span_id,
               type: "TYPE_UNSPECIFIED",
@@ -192,7 +192,6 @@ module OpenTelemetry
 
         def create_time_events events
           return if events.nil?
-          time_events = []
           dropped_message_events_count = 0
 
           dropped_annotations_count = 0
@@ -201,8 +200,8 @@ module OpenTelemetry
             events = events[0...MAX_EVENTS]
           end
 
-          events.each do |event|
-            time_events << Google::Cloud::Trace::V2::Span::TimeEvent.new(
+          time_events = events.map do |event|
+            Google::Cloud::Trace::V2::Span::TimeEvent.new(
               time: create_time(event.timestamp),
               annotation: Google::Cloud::Trace::V2::Span::TimeEvent::Annotation.new(
                 description: create_name(event.name, MAX_EVENT_NAME_BYTE_COUNT),
