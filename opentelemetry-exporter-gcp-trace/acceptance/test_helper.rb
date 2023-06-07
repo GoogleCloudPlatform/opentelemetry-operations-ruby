@@ -20,5 +20,13 @@ require "minitest/focus"
 require "minitest/hooks/default"
 require "minitest/rg"
 require "ostruct"
+require "google/cloud"
+require "google/cloud/trace/v1"
 require "opentelemetry/exporter/google_cloud_trace"
+
+$project_id = ENV["TRACE_EXPORTER_TEST_PROJECT"] || ENV["GCLOUD_TEST_PROJECT"] 
+Google::Cloud.configure do |config|
+  config.project_id = $project_id
+  config.credentials = ENV["TRACE_EXPORTER_TEST_KEYFILE"] || ENV["GCLOUD_TEST_KEYFILE"]
+end
 
