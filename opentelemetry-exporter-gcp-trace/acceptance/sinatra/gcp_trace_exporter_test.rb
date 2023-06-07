@@ -14,24 +14,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "test_helper"
+require "webrick"
+require "fileutils"
+require_relative "./sinatra_app.rb"
 
-require "bundler/gem_tasks"
-require "rake/testtask"
+# Test the Sinatra server for the Cloud Scheduler sample.
+describe "Opentelemety exporter for Google Cloud Trace" do
+  before :all do
+    @pid = Process.fork do
+      Sinatra::Application.start!
+    end
+    # wait for server to start
+    sleep 2
+  end
 
-Rake::TestTask.new :test do |t|
-  t.libs << "test"
-  t.libs << "lib"
-  t.test_files = FileList["test/**/*_test.rb"]
+  after :all do
+    Sinatra::Application.stop!
+    Process.kill "KILL", @pid
+    Process.wait2 @pid
+  end
+
+  it "test_returns_hello_world" do
+    uri = URI("http://127.0.0.1:4567")
+    res = Net::HTTP.get(uri)
+    assert_match "Hello !", res
+  end
 end
-
-Rake::TestTask.new :acceptance do |t|
-  t.libs << "acceptance"
-  t.libs << "lib"
-  t.test_files = FileList["acceptance/**/*_test.rb"]
-end
-
-require "rubocop/rake_task"
-
-RuboCop::RakeTask.new
-
-task default: [:test, :rubocop]
