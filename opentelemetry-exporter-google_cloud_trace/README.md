@@ -5,7 +5,7 @@ This library is an exporter for OpenTelemetry instrumentation which will help tr
 ## Installation
 
 ```sh
-$ gem install opentelemetry-exporter-gcp-trace
+$ gem install opentelemetry-exporter-google_cloud_trace
 ```
 
 ## Usage

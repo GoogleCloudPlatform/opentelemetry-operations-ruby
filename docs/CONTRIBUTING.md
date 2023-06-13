@@ -44,7 +44,7 @@ This is a mono repo that will contain tools that will support OpenTelemetry inst
 4. Install the specific tool dependencies.
 
    ```sh
-   $ cd opentelemetry-exporter-gcp-trace/
+   $ cd opentelemetry-exporter-google_cloud_trace/
    $ bundle install
    ```
 
@@ -57,7 +57,7 @@ To run the unit tests, documentation tests, and code style checks together for a
 package:
 
 ``` sh
-$ cd opentelemetry-exporter-gcp-trace/
+$ cd opentelemetry-exporter-google_cloud_trace/
 $ bundle exec rake ci
 ```
 
@@ -73,7 +73,7 @@ The project uses the [minitest](https://github.com/seattlerb/minitest) library a
 To run the unit tests:
 
 ``` sh
-$ cd opentelemetry-exporter-gcp-trace/
+$ cd opentelemetry-exporter-google_cloud_trace/
 $ bundle exec rake test
 ```
 
@@ -98,7 +98,7 @@ file. Make note of the PROJECT_ID and the KEYFILE location on your system.
 To run the acceptance tests:
 
 ``` sh
-$ cd opentelemetry-exporter-gcp-trace/
+$ cd opentelemetry-exporter-google_cloud_trace/
 $ bundle exec rake acceptance[\\{my-project-id},\\{/path/to/keyfile.json}]
 ```
 
@@ -106,7 +106,7 @@ Or, if you prefer you can store the values in the `GCLOUD_TEST_PROJECT` and
 `GCLOUD_TEST_KEYFILE` environment variables:
 
 ``` sh
-$ cd opentelemetry-exporter-gcp-trace/
+$ cd opentelemetry-exporter-google_cloud_trace/
 $ export GCLOUD_TEST_PROJECT=\\{my-project-id}
 $ export GCLOUD_TEST_KEYFILE=\\{/path/to/keyfile.json}
 $ bundle exec rake acceptance
@@ -127,7 +127,7 @@ on seattle-style:
 You can check your code against these rules by running Rubocop like so:
 
 ```sh
-$ cd opentelemetry-exporter-gcp-trace/
+$ cd opentelemetry-exporter-google_cloud_trace/
 $ bundle exec rake rubocop
 ```
 

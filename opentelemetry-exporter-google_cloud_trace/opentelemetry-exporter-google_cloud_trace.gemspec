@@ -18,14 +18,15 @@
 require_relative "lib/opentelemetry/exporter/google_cloud_trace/version"
 
 Gem::Specification.new do |spec|
-  spec.name = "opentelemetry-exporter-gcp-trace"
+  spec.name = "opentelemetry-exporter-google_cloud_trace"
   spec.version = OpenTelemetry::Exporter::GoogleCloudTrace::VERSION
   spec.authors = ["Nivedha"]
   spec.email = ["nivedhasenthil@gmail.com"]
 
   spec.summary = "Opentelemetry exporter for Google Cloud Trace"
-  spec.description = "opentelemetry-exporter-gcp-trace is the officially supported exporter for Google Cloud Trace"
-  spec.homepage = "https://github.com/GoogleCloudPlatform/opentelemetry-operations-ruby/tree/main/opentelemetry-exporter-gcp-trace"
+  spec.description = "opentelemetry-exporter-google_cloud_trace is \
+                     the officially supported exporter for Google Cloud Trace"
+  spec.homepage = "https://github.com/GoogleCloudPlatform/opentelemetry-operations-ruby/tree/main/opentelemetry-exporter-google_cloud_trace"
   spec.required_ruby_version = ">= 2.6.0"
   spec.metadata["homepage_uri"] = spec.homepage
   spec.require_paths = ["lib"]
