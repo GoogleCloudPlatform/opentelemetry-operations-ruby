@@ -17,4 +17,4 @@ Metrics/ClassLength:
 
 Naming/FileName:
   Exclude:
-    - "lib/opentelemetry-exporter-gcp-trace.rb"     
+    - "lib/opentelemetry-exporter-google_cloud_trace.rb"     

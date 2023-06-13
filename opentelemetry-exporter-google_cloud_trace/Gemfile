@@ -17,7 +17,7 @@
 
 source "https://rubygems.org"
 
-# Specify your gem's dependencies in opentelemetry-exporter-gcp-trace.gemspec
+# Specify your gem's dependencies in opentelemetry-exporter-google_cloud_trace.gemspec
 gemspec
 
 gem "rake", "~> 13.0"
