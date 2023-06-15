@@ -25,17 +25,17 @@ Rake::TestTask.new :test do |t|
 end
 
 task :acceptance, :project, :keyfile do |_t, args|
-  # project = args[:project]
-  # project ||= ENV["TRACE_EXPORTER_TEST_PROJECT"] || ENV["GCLOUD_TEST_PROJECT"]
-  # keyfile = args[:keyfile]
-  # keyfile ||= ENV["TRACE_EXPORTER_TEST_KEYFILE"] || ENV["GCLOUD_TEST_KEYFILE"]
-  # if keyfile
-  #   keyfile = File.read keyfile
-  # end
-  # if project.nil? || keyfile.nil?
-  #   raise "You must provide a project and keyfile. e.g. rake acceptance[test123, /path/to/keyfile.json] or " \
-  #         "TRACE_EXPORTER_TEST_PROJECT=test123 TRACE_EXPORTER_TEST_KEYFILE=/path/to/keyfile.json rake acceptance"
-  # end
+  project = args[:project]
+  project ||= ENV["TRACE_EXPORTER_TEST_PROJECT"] || ENV["GCLOUD_TEST_PROJECT"]
+  keyfile = args[:keyfile]
+  keyfile ||= ENV["TRACE_EXPORTER_TEST_KEYFILE"] || ENV["GCLOUD_TEST_KEYFILE"]
+  if keyfile
+    keyfile = File.read keyfile
+  end
+  if project.nil? || keyfile.nil?
+    raise "You must provide a project and keyfile. e.g. rake acceptance[test123, /path/to/keyfile.json] or " \
+          "TRACE_EXPORTER_TEST_PROJECT=test123 TRACE_EXPORTER_TEST_KEYFILE=/path/to/keyfile.json rake acceptance"
+  end
 
   Rake::Task["acceptance:run"].invoke
 end

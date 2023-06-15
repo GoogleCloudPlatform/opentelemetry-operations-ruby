@@ -22,11 +22,17 @@ require "google/protobuf/well_known_types"
 # Test the Sinatra server for the Cloud Scheduler sample.
 describe "Opentelemety exporter for Google Cloud Trace" do
   before :all do
+    @project_id = ENV["TRACE_EXPORTER_TEST_PROJECT"] || ENV["GCLOUD_TEST_PROJECT"]
+    Google::Cloud.configure do |config|
+      config.project_id = @project_id
+      config.credentials = ENV["TRACE_EXPORTER_TEST_KEYFILE"] || ENV["GCLOUD_TEST_KEYFILE"]
+    end
+
     @pid = Process.fork do
-      exec "bundle", "exec", "ruby", "acceptance/sinatra/sinatra_app.rb" 
+      exec "bundle", "exec", "ruby", "acceptance/sinatra/sinatra_app.rb"
     end
     # wait for server to start
-    sleep 2
+    sleep 10
     @trace_client = Google::Cloud::Trace::V1::TraceService::Client.new
   end
 
@@ -38,19 +44,57 @@ describe "Opentelemety exporter for Google Cloud Trace" do
   it "test_returns_hello_world" do
     uri = URI("http://127.0.0.1:4567")
     start_time = Google::Protobuf::Timestamp.from_time Time.now
-    res = Net::HTTP.get(uri)
+    res = Net::HTTP.get uri
     assert_match "Hello !", res
-    sleep 20 # wait for trace to be sent
+    sleep 10 # wait for trace to be sent
     end_time = Google::Protobuf::Timestamp.from_time Time.now
 
     assert_trace start_time, end_time
   end
+end
 
-  def assert_trace start_time, end_time
-    result = @trace_client.list_traces project_id: $project_id, start_time: start_time, end_time: end_time
-    traces = result.response.traces 
-    traces.each do |trace|
-      p @trace_client.get_trace project_id: $project_id, trace_id: trace.trace_id
+def assert_trace start_time, end_time
+  result = @trace_client.list_traces project_id: @project_id, start_time: start_time, end_time: end_time
+  traces = result.response.traces
+  test_span = nil
+  parent_span = nil
+
+  traces.each do |trace|
+    full_trace = @trace_client.get_trace project_id: @project_id, trace_id: trace.trace_id
+    full_trace.spans.each do |span|
+      if span.name === "test_span"
+        test_span = span
+        break
+      end
+    end
+
+    if test_span
+      parent_span = full_trace.spans.find { |span| span.span_id === test_span.parent_span_id }
+      break
     end
   end
+
+  assert_child_span test_span
+  assert_parent_span parent_span
+end
+
+def assert_child_span span
+  refute_nil span
+  assert_equal span.labels["span_attr"], "span_value"
+end
+
+def assert_parent_span span
+  refute_nil span
+  assert_equal span.kind, :RPC_SERVER
+  assert_equal span.name, "GET /"
+  assert_equal span.labels["g.co/agent"], "opentelemetry-ruby #{OpenTelemetry::SDK::VERSION};" \
+                                          "google-cloud-trace-exporter " \
+                                          "#{OpenTelemetry::Exporter::GoogleCloudTrace::VERSION}"
+  assert_equal span.labels["/http/client_protocol"], "http"
+  assert_equal span.labels["/http/status_code"], "200"
+  assert_equal span.labels["http.target"], "/"
+  assert_equal span.labels["/http/method"], "GET"
+  assert_equal span.labels["/http/host"], "127.0.0.1:4567"
+  assert_equal span.labels["/http/route"], "/"
+  assert_equal span.labels["/http/user_agent"], "Ruby"
 end
