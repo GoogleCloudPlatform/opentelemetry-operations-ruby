@@ -21,5 +21,5 @@ get "/" do
   test_tracer.in_span "test_span", attributes: { "span_attr" => "span_value" }, links: [link] do |span|
     span.add_event "Creating test span event!!", attributes: { "event_attr" => "event_value" }
   end
-  "Hello !"
+  "Hello world!"
 end

@@ -116,7 +116,7 @@ end
 
 def setup_auth_env
   final_project = project || ENV["GCLOUD_TEST_PROJECT"] || ENV["GOOGLE_CLOUD_PROJECT"]
-  final_keyfile = keyfile || ENV["GCLOUD_TEST_KEYFILE"]
+  final_keyfile = keyfile || ENV["GCLOUD_TEST_KEYFILE"] || ENV["GOOGLE_APPLICATION_CREDENTIALS"]
   logger.info "Project for integration tests: #{final_project.inspect}"
   logger.info "Set keyfile for integration tests." if final_keyfile
   {
