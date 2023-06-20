@@ -31,8 +31,5 @@ for ruby_version in "${ruby_versions[@]}"; do
   export PATH=$GEM_HOME/bin:$PATH
 
   gem install --no-document toys
-  echo "args"
-  echo $EXTRA_CI_ARGS
-  echo "*****"
   toys ci -v --load-kokoro-context $EXTRA_CI_ARGS < /dev/null
 done

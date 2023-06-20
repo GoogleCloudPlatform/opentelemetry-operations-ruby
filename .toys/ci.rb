@@ -296,6 +296,8 @@ def filter_gem_dirs dirs
 end
 
 def run_in_dir dir
+  p "auth"
+  p @auth_env
   Dir.chdir dir do
     if @bundle_task
       puts
