@@ -49,4 +49,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "minitest-autotest", "~> 1.0"
   spec.add_development_dependency "minitest-focus", "~> 1.1"
   spec.add_development_dependency "minitest-rg", "~> 5.2"
+  spec.add_development_dependency "yard", "~> 0.9"
+  spec.add_development_dependency "yard-doctest", "~> 0.1.13"
 end
