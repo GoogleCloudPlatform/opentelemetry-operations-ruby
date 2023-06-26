@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Copyright 2023 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,14 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# frozen_string_literal: true
 
-module Opentelemetry
-  module Exporter
-    module Gcp
-      module Trace
-        VERSION = "0.1.0"
-      end
-    end
-  end
-end
+require "minitest/autorun"
+require "minitest/focus"
+require "minitest/rg"
+require "ostruct"
+require "opentelemetry/exporter/google_cloud_trace"

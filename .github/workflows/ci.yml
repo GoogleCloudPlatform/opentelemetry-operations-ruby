@@ -1,0 +1,62 @@
+name: CI
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: "20 8 * * *"
+  workflow_dispatch:
+    inputs:
+      head:
+        description: "Commit reference at which to run tests"
+        required: false
+      base:
+        description: "Commit reference from which to evaluate diffs"
+        required: false
+
+jobs:
+  CI:
+    if: ${{ github.repository == 'GoogleCloudPlatform/opentelemetry-operations-ruby' }}
+    defaults:
+      run:
+        working-directory: ./opentelemetry-exporter-google_cloud_trace
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            ruby: "2.6"
+          - os: ubuntu-latest
+            ruby: "2.7"
+          - os: ubuntu-latest
+            ruby: "3.0"
+          - os: ubuntu-latest
+            ruby: "3.1"
+          - os: ubuntu-latest
+            ruby: "3.2"
+          - os: macos-latest
+            ruby: "3.2"
+          - os: windows-latest
+            ruby: "3.2"
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+    - name: Install Ruby ${{ matrix.ruby }}
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: "${{ matrix.ruby }}"
+    - name: Bundle install
+      run: |
+        bundle install    
+    - name: Rubocop
+      run: |
+        bundle exec rake rubocop    
+    - name: Test 
+      run: |
+        bundle exec rake test
+
+    

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Copyright 2023 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,15 +14,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# frozen_string_literal: true
-
-source "https://rubygems.org"
-
-# Specify your gem's dependencies in opentelemetry-exporter-gcp-trace.gemspec
-gemspec
-
-gem "rake", "~> 13.0"
-
-gem "minitest", "~> 5.0"
-
-gem "rubocop", "~> 1.21"
+require "opentelemetry/exporter/google_cloud_trace"

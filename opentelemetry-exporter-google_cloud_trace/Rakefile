@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Copyright 2023 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,16 +14,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# frozen_string_literal: true
 
-require "test_helper"
+require "bundler/gem_tasks"
+require "rake/testtask"
 
-class Opentelemetry::Exporter::Gcp::TestTrace < Minitest::Test
-  def test_that_it_has_a_version_number
-    refute_nil ::Opentelemetry::Exporter::Gcp::Trace::VERSION
-  end
-
-  def test_it_does_something_useful
-    assert false
-  end
+Rake::TestTask.new :test do |t|
+  t.libs << "test"
+  t.libs << "lib"
+  t.test_files = FileList["test/**/*_test.rb"]
 end
+
+require "rubocop/rake_task"
+
+RuboCop::RakeTask.new
+
+task default: [:test, :rubocop]

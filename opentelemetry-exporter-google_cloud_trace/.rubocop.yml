@@ -1,0 +1,20 @@
+inherit_gem:
+  google-style: google-style.yml
+
+Metrics/BlockLength:
+  Enabled: true
+  Exclude: 
+    - test/**/*
+
+Style/PreferredHashMethods:
+  Enabled: true
+  Exclude: 
+    - test/**/*
+
+Metrics/ClassLength:
+  Exclude:
+    - "**/translator.rb"   
+
+Naming/FileName:
+  Exclude:
+    - "lib/opentelemetry-exporter-google_cloud_trace.rb"     
