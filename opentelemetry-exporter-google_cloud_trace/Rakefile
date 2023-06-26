@@ -24,6 +24,12 @@ Rake::TestTask.new :test do |t|
   t.test_files = FileList["test/**/*_test.rb"]
 end
 
+require "yard"
+require "yard/rake/yardoc_task"
+YARD::Rake::YardocTask.new do |y|
+  # y.options << "--fail-on-warning"
+end
+
 task :acceptance, :project, :keyfile do |_t, args|
   project = args[:project]
   project ||= ENV["TRACE_EXPORTER_TEST_PROJECT"] || ENV["GCLOUD_TEST_PROJECT"]
