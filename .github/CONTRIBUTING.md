@@ -1,4 +1,4 @@
-# Contributing to Ruby Spanner client
+# Contributing to Opentelemetry operations ruby client
 
 1. **Sign one of the contributor license agreements below.**
 2. Fork the repo, develop and test your code changes.
@@ -15,7 +15,7 @@ You can sign these electronically (just scroll to the bottom). After that, we'll
 
 ## Setup
 
-In order to use the ruby-spanner console and run the project's tests, there is a
+In order to use the opentelemetry-operations-ruby console and run the project's tests, there is a
 small amount of setup:
 
 1. Install Ruby.
