@@ -25,7 +25,7 @@ describe "Opentelemety exporter for Google Cloud Trace" do
     @project_id = ENV["TRACE_EXPORTER_TEST_PROJECT"] || ENV["GCLOUD_TEST_PROJECT"]
     Google::Cloud.configure do |config|
       config.project_id = @project_id
-      # config.credentials = ENV["TRACE_EXPORTER_TEST_KEYFILE"] || ENV["GCLOUD_TEST_KEYFILE"]
+      config.credentials = ENV["TRACE_EXPORTER_TEST_KEYFILE"] || ENV["GCLOUD_TEST_KEYFILE"]
     end
 
     @pid = Process.fork do
