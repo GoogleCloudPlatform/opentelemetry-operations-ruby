@@ -5,6 +5,7 @@ Metrics/BlockLength:
   Enabled: true
   Exclude: 
     - test/**/*
+    - opentelemetry-exporter-google_cloud_trace.gemspec
 
 Style/PreferredHashMethods:
   Enabled: true
