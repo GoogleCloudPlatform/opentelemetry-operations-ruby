@@ -28,9 +28,8 @@ describe "Opentelemety exporter for Google Cloud Trace" do
       config.credentials = ENV["TRACE_EXPORTER_TEST_KEYFILE"] || ENV["GCLOUD_TEST_KEYFILE"]
     end
 
-    @pid = Process.fork do
-      exec "bundle", "exec", "ruby", "acceptance/sinatra/sinatra_app.rb"
-    end
+    @pid = Process.spawn "bundle exec ruby acceptance/sinatra/sinatra_app.rb"
+    
     # wait for server to start
     sleep 10
     @trace_client = Google::Cloud::Trace::V1::TraceService::Client.new
