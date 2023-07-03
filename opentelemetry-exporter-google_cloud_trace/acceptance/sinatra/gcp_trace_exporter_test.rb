@@ -29,7 +29,7 @@ describe "Opentelemety exporter for Google Cloud Trace" do
     end
 
     @pid = Process.spawn "bundle exec ruby acceptance/sinatra/sinatra_app.rb"
-    
+
     # wait for server to start
     sleep 10
     @trace_client = Google::Cloud::Trace::V1::TraceService::Client.new
