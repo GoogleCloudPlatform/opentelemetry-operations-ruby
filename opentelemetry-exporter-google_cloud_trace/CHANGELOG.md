@@ -1,7 +1,12 @@
 # Changelog
 
-## 1.0.0 (2023-07-04)
+## 0.1.0 (2023-07-04)
 
 #### Features
 
-* minimal Cloud Trace exporter for OpenTelemetry 
+* first release of exporter with minimal support 
+* minimal Cloud trace exporter for OpenTelemetry 
+* minimal Cloud trace exporter for OpenTelemetry 
+### Reverts
+
+* rakefile changes 
