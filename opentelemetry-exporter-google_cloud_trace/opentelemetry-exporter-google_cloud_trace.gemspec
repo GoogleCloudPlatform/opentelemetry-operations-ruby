@@ -44,11 +44,17 @@ Gem::Specification.new do |spec|
   spec.add_dependency "google-cloud-trace-v2", "~> 0.0"
   spec.add_dependency "opentelemetry-sdk"
 
+  spec.add_development_dependency "google-cloud-core"
+  spec.add_development_dependency "google-cloud-trace-v1"
   spec.add_development_dependency "google-style", "~> 1.26.1"
   spec.add_development_dependency "minitest", "~> 5.16"
   spec.add_development_dependency "minitest-autotest", "~> 1.0"
   spec.add_development_dependency "minitest-focus", "~> 1.1"
+  spec.add_development_dependency "minitest-hooks"
   spec.add_development_dependency "minitest-rg", "~> 5.2"
+  spec.add_development_dependency "opentelemetry-instrumentation-sinatra"
+  spec.add_development_dependency "sinatra"
+  spec.add_development_dependency "webrick"
   spec.add_development_dependency "yard", "~> 0.9"
   spec.add_development_dependency "yard-doctest", "~> 0.1.13"
 end

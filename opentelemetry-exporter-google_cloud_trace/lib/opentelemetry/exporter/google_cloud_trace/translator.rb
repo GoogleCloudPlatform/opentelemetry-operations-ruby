@@ -163,8 +163,8 @@ module OpenTelemetry
           end
 
           trace_links = links.map do |link|
-            trace_id = link.context&.hex_trace_id
-            span_id = link.context&.hex_span_id
+            trace_id = link.span_context&.hex_trace_id
+            span_id = link.span_context&.hex_span_id
             Google::Cloud::Trace::V2::Span::Link.new(
               trace_id: trace_id,
               span_id: span_id,
