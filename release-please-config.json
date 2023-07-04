@@ -1,0 +1,19 @@
+{
+    "bump-minor-pre-major": true,
+    "bump-patch-for-minor-pre-major": false,
+    "draft": false,
+    "include-component-in-tag": true,
+    "include-v-in-tag": true,
+    "prerelease": false,
+    "release-type": "ruby-yoshi",
+    "skip-github-release": false,
+    "separate-pull-requests": true,
+    "tag-separator": "/",
+    "sequential-calls": true,
+    "packages": {
+      "opentelemetry-exporter-google_cloud_trace": {
+        "component": "opentelemetry-exporter-google_cloud_trace",
+        "version_file": "lib/opentelemetry/exporter/google_cloud_trace/version.rb"
+      }
+    }
+}
