@@ -4,8 +4,4 @@
 
 #### Features
 
-* minimal Cloud trace exporter for OpenTelemetry 
-* minimal Cloud trace exporter for OpenTelemetry 
-### Reverts
-
-* rakefile changes 
+* minimal Cloud Trace exporter for OpenTelemetry 
