@@ -1,7 +1,11 @@
 */Gemfile.lock
+*/doc/*
 
 #vs code
 .vscode/
 
 #macos
 .DS_Store
+
+# Ignore YARD stuffs
+*/.yardoc
