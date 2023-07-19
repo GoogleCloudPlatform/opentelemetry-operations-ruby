@@ -324,6 +324,7 @@ end
 def run_linkinator dir
   dir_without_version = dir.sub(/-v\d\w*$/, "")
   skip_regexes = [
+    "^LICENSE$",
     "\\w+\\.md$",
     "^https://googleapis\\.dev/ruby/#{dir}/latest$",
     "^https://cloud\\.google\\.com/ruby/docs/reference/#{dir}/latest$",
