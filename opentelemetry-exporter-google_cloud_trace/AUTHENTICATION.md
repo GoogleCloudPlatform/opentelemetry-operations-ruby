@@ -61,10 +61,8 @@ automatically. Code should be written as if already authenticated.
 ### Environment Variables
 
 The **Project ID** and **Credentials JSON** can be placed in environment
-variables instead of declaring them directly in code. Each service has its own
-environment variable, allowing for different service accounts to be used for
-different services. (See the READMEs for the individual service gems for
-details.) The path to the **Credentials JSON** file can be stored in the
+variables instead of declaring them directly in code. 
+The path to the **Credentials JSON** file can be stored in the
 environment variable, or the **Credentials JSON** itself can be stored for
 environments such as Docker containers where writing files is difficult or not
 encouraged.
