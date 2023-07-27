@@ -5,7 +5,6 @@
 #### Bug Fixes
 
 * add missing redcarpet dependency 
-* add missing redcarpet dependency 
 
 ## 0.1.0 (2023-07-04)
 
