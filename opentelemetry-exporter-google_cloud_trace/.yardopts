@@ -3,15 +3,13 @@
 --exclude _pb\.rb$
 --markup markdown
 --markup-provider redcarpet
---main OVERVIEW.md
+--readme README.md
 
 ./lib/**/*.rb
 -
-OVERVIEW.md
+README.md
 AUTHENTICATION.md
-LOGGING.md
 CONTRIBUTING.md
-TROUBLESHOOTING.md
 CHANGELOG.md
 CODE_OF_CONDUCT.md
 LICENSE

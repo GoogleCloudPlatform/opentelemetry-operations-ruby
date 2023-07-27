@@ -59,7 +59,7 @@ module OpenTelemetry
 
         # Creates batch_write_spans_request from opentelemetry spans
         #
-        # @param [Enumerable<OpenTelemetry::SDK::Trace::SpanData>] span_data the
+        # @param [Enumerable<OpenTelemetry::SDK::Trace::SpanData>] spans the
         #   list of recorded {OpenTelemetry::SDK::Trace::SpanData} structs to be
         #   exported.
         # @return [Google::Cloud::Trace::V2::BatchWriteSpansRequest]

@@ -53,6 +53,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "minitest-hooks"
   spec.add_development_dependency "minitest-rg", "~> 5.2"
   spec.add_development_dependency "opentelemetry-instrumentation-sinatra"
+  spec.add_development_dependency "redcarpet", "~> 3.0"
   spec.add_development_dependency "sinatra"
   spec.add_development_dependency "webrick"
   spec.add_development_dependency "yard", "~> 0.9"
